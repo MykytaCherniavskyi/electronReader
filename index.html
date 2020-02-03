@@ -5,14 +5,40 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+      <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css">
     <link rel="stylesheet" href="./preloader.css">
-    <title>Hello World!</title>
+    <link rel="stylesheet" href="./customStyles.css">
+    <title>File Reader</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+    <nav>
+        <div class="nav-wrapper">
+            <a class="brand-logo center">File Reader</a>
+        </div>
+    </nav>
+    <div class="row">
+        <div class="area">
+            <a href="#" id="drag">Drop your file hear</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <ul></ul>
+        </div>
+        <div class="col s6">
+            <div class="row">
+                <form class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <textarea id="fileData" class="materialize-textarea"></textarea>
+                            <label for="fileData">File Data</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Preloader -->
     <section>
@@ -59,7 +85,6 @@
       </div>
     </section>
 
-    <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
   </body>
 </html>

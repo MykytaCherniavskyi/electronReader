@@ -1,0 +1,15 @@
+.area {
+    padding: 15px;
+    border: 1px solid #333;
+    background: rgba(0,0,0,0.7);
+}
+#drag {
+    display: block;
+    border: 2px dashed #bbb;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    font: 21pt bold arial;
+    color: #bbb;
+}
