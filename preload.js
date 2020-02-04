@@ -2,9 +2,7 @@
 // It has the same sandbox as a Chrome extension.
 window.addEventListener('DOMContentLoaded', () => {
   window.$ = window.jQuery = require('jquery');
-  window.M = require('materialize-css/dist/js/materialize.min');
   const fileData = document.getElementById('fileData');
-  M.textareaAutoResize(fileData);
 
   setTimeout(function() {
     $('#ctn-preloader').addClass('loaded');
@@ -21,6 +19,36 @@ window.addEventListener('DOMContentLoaded', () => {
   const {ipcRenderer} = electron;
   const ul = document.querySelector('ul');
   const dragArea = document.getElementById('drag');
+  const tableBody = $('#table > tbody');
+  let rules = [];
+
+  document.getElementById('search').addEventListener('click', function (e) {
+    e.preventDefault();
+    const textFieldData = fileData.value;
+    const rulesCoincidence = [];
+
+    rules.forEach(rule => {
+      const coincidence = textFieldData.match(new RegExp(rule, 'g'));
+
+      rulesCoincidence.push({
+        rule,
+        count: coincidence ? coincidence.length : 0
+      });
+    });
+    addDataToTable(rulesCoincidence);
+  });
+
+  function addDataToTable(data) {
+    tableBody.empty();
+
+    data.forEach(({rule, count}) => {
+      const row = `<tr>
+          <td>${rule}</td>
+          <td>${count}</td>
+      </tr>`;
+      tableBody.append(row);
+    })
+  }
 
   dragArea.addEventListener('drop', function (e) {
     e.preventDefault();
@@ -39,8 +67,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   ipcRenderer.on('fileData', function (e, data) {
     fileData.value = data;
-    M.textareaAutoResize(fileData);
-    console.log(data);
   });
 
   // add rule
@@ -49,6 +75,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const li = document.createElement('li');
     li.className = 'collection-item';
     const RuleText = document.createTextNode(rule);
+    rules.push(rule);
     li.appendChild(RuleText);
     ul.appendChild(li);
   });
@@ -57,12 +84,16 @@ window.addEventListener('DOMContentLoaded', () => {
   ipcRenderer.on('rule:clear', function () {
     ul.innerHTML = '';
     ul.className = '';
+    rules = [];
   });
 
   // remove rule
   ul.addEventListener('dblclick', removeRule);
 
   function removeRule(e) {
+    const ruleText = $(e.target).text();
+    const indexRule = rules.indexOf(ruleText);
+    rules.splice(indexRule, 1);
     e.target.remove();
 
     if (ul.children.length === 0) {

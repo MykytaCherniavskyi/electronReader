@@ -1,3 +1,7 @@
+body {
+    background-color: #e0e0e0;
+}
+
 .area {
     padding: 15px;
     border: 1px solid #333;
@@ -12,4 +16,12 @@
     text-align: center;
     font: 21pt bold arial;
     color: #bbb;
+}
+
+#textAreaDiv {
+    overflow-y: auto;
+}
+
+#fileData {
+    height: 300px;
 }

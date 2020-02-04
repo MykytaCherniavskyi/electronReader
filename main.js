@@ -50,7 +50,7 @@ function createAddWindow() {
   // create new window
   addWindow = new BrowserWindow({
     width: 300,
-    height: 200,
+    height: 150,
     title: 'Add Rule',
     webPreferences: {
       nodeIntegration: true,
