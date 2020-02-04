@@ -1,19 +1,18 @@
-// Modules to control application life and create native browser window
+// Модуль контроля жизненого цикла приложения и создания нативных окон
 const {app, BrowserWindow, Menu, ipcMain, dialog} = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
 
-// SET ENV
+// SET ENV консоль для дебага
 // process.env.NODE_ENV = 'production';
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+// Место хранение глобальных переменных для окон приложения.
 let mainWindow;
 let addWindow;
 
 function createWindow () {
-  // Create the browser window.
+  // Создание браузерного окна
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -24,30 +23,27 @@ function createWindow () {
     }
   });
 
-  // and load the index.html of the app.
+  // загрузка index.html страницы приложения
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
   }));
 
-  // Build menu from template
+  // Построения меню из шаблона
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-  // Insert menu
+  // Установить меню
   Menu.setApplicationMenu(mainMenu);
 
-  // Emitted when the window is closed.
+  // Обработчик закрытия главного окна
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     app.quit();
   })
 }
 
-// handle add window
+// обработчик создания доп окна
 function createAddWindow() {
-  // create new window
+  // создания нового окна
   addWindow = new BrowserWindow({
     width: 300,
     height: 150,
@@ -57,7 +53,7 @@ function createAddWindow() {
     }
   });
 
-  // and load the html of the app.
+  // загрузка страницы для окна
   addWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'addRuleWindow.html'),
     protocol: 'file:',
@@ -66,27 +62,28 @@ function createAddWindow() {
 
   addWindow.removeMenu();
 
-  // Garbage collection handle
+  // обработчик закрытия доп окна
   addWindow.on('close', function () {
     addWindow = null;
   })
 }
 
-// Catch Item Add
+// Обработка добавления правила из доп окна и отправка этого правила в на страницу главного окна
 ipcMain.on('rule:add', function (e, rule) {
   mainWindow.webContents.send('rule:add', rule);
   addWindow.close();
 });
 
-// Drag Catch
+// Обработка перенесенного файла
 ipcMain.on('ondrop', fileReader);
 
+// Чтение файла и отправка данных в главное окно
 function fileReader(e, filePath) {
   const data = fs.readFileSync(filePath, 'utf8');
   mainWindow.webContents.send('fileData', data);
 }
 
-//create menu template
+// Шаблон меню
 // accelerator - hot key
 // darwin - mac
 const mainMenuTemplate = [
@@ -112,6 +109,7 @@ const mainMenuTemplate = [
             properties: ['openFile']
           }).then(result => {
             if (!result.canceled) {
+              // берется первый путь к файлу
               const [filePath] = result.filePaths;
               fileReader(null, filePath);
             }
@@ -131,25 +129,21 @@ const mainMenuTemplate = [
   }
 ];
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// Метод для создания окна, когда electron будет готов
 app.on('ready', createWindow);
 
-// Quit when all windows are closed.
+// обработка закрытия всех окон
 app.on('window-all-closed', function () {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
+  // macos command+Q для выхода
   if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('activate', function () {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
+  // пересоздания окна, если по клику по иконке нету главного окна
   if (mainWindow === null) createWindow();
 });
 
-// Add developer tools item if not in production mode
+// добавление developer tools, если не продакшен мод
 if (process.env.NODE_ENV !== 'production') {
   mainMenuTemplate.push({
     label: 'Developer tools',
@@ -167,6 +161,3 @@ if (process.env.NODE_ENV !== 'production') {
     ]
   })
 }
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

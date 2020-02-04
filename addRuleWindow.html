@@ -16,13 +16,18 @@
     </div>
 
     <script>
+        // добавление обработчика событий при загрузки контента страницы
       window.addEventListener('DOMContentLoaded', () => {
+        // подключение модуля electron и дальнейшего извлечения ipcRenderer
+        // для связи с главным процессом ipcMain в main.js и передачи данных туда
         const electron = require('electron');
         const {ipcRenderer} = electron;
 
         const form = document.querySelector('form');
+        // обработка нажатия кнопки submit
         form.addEventListener('submit', submitForm);
 
+        // функция обработчик submit и отправка данных в main процесс приложения
         function submitForm(e) {
           e.preventDefault();
           const rule = document.getElementById('rule').value;
