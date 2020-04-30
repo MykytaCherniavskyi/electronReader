@@ -46,7 +46,7 @@
     "electron-packager": "^14.2.0"
   },
   "dependencies": {
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "materialize-css": "^1.0.0-rc.2"
   }
 }
